@@ -1,30 +1,30 @@
-import { json, type MetaFunction } from '@remix-run/cloudflare';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/cloudflare';
 import { ClientOnly } from 'remix-utils/client-only';
-import { BaseChat } from '~/components/chat/BaseChat';
-import { FolderChat } from '~/components/chat/FolderChat.client';
 import { Header } from '~/components/header/Header';
 import BackgroundRays from '~/components/ui/BackgroundRays';
 import { Workbench } from '~/components/workbench/Workbench.client';
+import { FolderWorkspace } from '~/components/workbench/FolderWorkspace.client';
 
 export const meta: MetaFunction = () => {
     return [
-        { title: 'Bolt - 项目聊天' },
-        { name: 'description', content: '与你的项目进行智能对话' }
+        { title: 'Bolt - 项目工作区' },
+        { name: 'description', content: '项目开发工作区' }
     ];
 };
 
-export const loader = () => json({});
+export const loader = ({ request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url);
+    const previewUrl = url.searchParams.get('preview');
+    return json({ previewUrl });
+};
 
-export default function FolderChatPage() {
+export default function FolderWorkspacePage() {
     return (
         <div className="flex flex-col h-full w-full bg-bolt-elements-background-depth-1">
             <BackgroundRays />
             <Header />
             <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
-                <div className="flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full">
-                    <ClientOnly fallback={<BaseChat />}>{() => <FolderChat />}</ClientOnly>
-                </div>
-                <ClientOnly>{() => <Workbench chatStarted={true} />}</ClientOnly>
+                <ClientOnly>{() => <FolderWorkspace />}</ClientOnly>
             </div>
         </div>
     );
